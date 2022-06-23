@@ -3,7 +3,8 @@ import { MdOutlineDeleteOutline, FaRegEdit } from "../../assets/icons/icons";
 
 const EmployeeCard = (props) => {
   const {
-    employee: { name, email, role },
+    employee: { id, name, email, role },
+    dispatch,
   } = props;
 
   return (
@@ -15,7 +16,15 @@ const EmployeeCard = (props) => {
       <td className="p-2">{email}</td>
       <td className="p-2">{role}</td>
       <td className="p-2 text-xl flex gap-4">
-        <FaRegEdit className="cursor-pointer" />
+        <FaRegEdit
+          className="cursor-pointer"
+          onClick={() => {
+            dispatch({
+              type: "ON_CLICK_EDIT_ICON",
+              payload: id,
+            });
+          }}
+        />
         <MdOutlineDeleteOutline className="cursor-pointer text-2xl text-red-600" />
       </td>
     </tr>

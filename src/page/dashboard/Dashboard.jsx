@@ -1,6 +1,11 @@
 import axios from "axios";
 import React, { useEffect, useReducer } from "react";
-import { EmployeeCard, NavigationBottom, SearchBar } from "../../components";
+import {
+  EditModal,
+  EmployeeCard,
+  NavigationBottom,
+  SearchBar,
+} from "../../components";
 import {
   getCurrentPageEmployeeList,
   getFilteredListBySearch,
@@ -13,11 +18,13 @@ function Dashboard() {
     employeeList: [],
     currentPage: 1,
     searchValue: "",
+    isEditModal: false,
+    id: null,
   };
 
   const [state, dispatch] = useReducer(reducerFunction, initialState);
   const pageLimit = 10;
-  const { employeeList, currentPage, searchValue } = state;
+  const { employeeList, currentPage, searchValue, isEditModal, id } = state;
 
   useEffect(() => {
     const fetchEmployeeList = async () => {
@@ -64,7 +71,11 @@ function Dashboard() {
           </thead>
           <tbody>
             {currentPageEmployeeList.map((employee) => (
-              <EmployeeCard key={employee.id} employee={employee} />
+              <EmployeeCard
+                key={employee.id}
+                employee={employee}
+                dispatch={dispatch}
+              />
             ))}
           </tbody>
         </table>
@@ -73,6 +84,12 @@ function Dashboard() {
         pages={pages}
         dispatch={dispatch}
         currentPage={currentPage}
+      />
+      <EditModal
+        isEditModal={isEditModal}
+        id={id}
+        dispatch={dispatch}
+        employeeList={employeeList}
       />
     </main>
   );
