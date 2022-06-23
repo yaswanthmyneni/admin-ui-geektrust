@@ -1,18 +1,23 @@
 import axios from "axios";
 import React, { useEffect, useReducer } from "react";
 import { EmployeeCard, NavigationBottom, SearchBar } from "../../components";
-import { getCurrentPageEmployeeList, pageRange } from "../../utility";
+import {
+  getCurrentPageEmployeeList,
+  getFilteredListBySearch,
+  pageRange,
+} from "../../utility";
 import { reducerFunction } from "./reducer-function";
 
 function Dashboard() {
   const initialState = {
     employeeList: [],
     currentPage: 1,
+    searchValue: "",
   };
 
   const [state, dispatch] = useReducer(reducerFunction, initialState);
   const pageLimit = 10;
-  const { employeeList, currentPage } = state;
+  const { employeeList, currentPage, searchValue } = state;
 
   useEffect(() => {
     const fetchEmployeeList = async () => {
@@ -26,17 +31,24 @@ function Dashboard() {
     fetchEmployeeList();
   }, []);
 
-  const pagePills = Math.ceil(employeeList.length / pageLimit);
+  // filtering by search input
+  const filteredListBySearch = getFilteredListBySearch(
+    employeeList,
+    searchValue
+  );
+
+  // calculations for pagination
+  const pagePills = Math.ceil(filteredListBySearch.length / pageLimit);
   const pages = pageRange(pagePills);
   const currentPageEmployeeList = getCurrentPageEmployeeList(
-    employeeList,
+    filteredListBySearch,
     currentPage,
     pageLimit
   );
 
   return (
     <main className="w-11/12 lg:w-3/4 h-screen mx-auto">
-      <SearchBar />
+      <SearchBar searchValue={searchValue} dispatch={dispatch} />
       <section className="h-3/5 w-full overflow-auto">
         <table className="w-full">
           <thead>

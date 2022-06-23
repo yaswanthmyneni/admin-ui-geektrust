@@ -8,6 +8,8 @@ const reducerFunction = (state, { type, payload }) => {
       return { ...state, currentPage: state.currentPage + 1 };
     case "DECREMENT_CURRENT_PAGE":
       return { ...state, currentPage: state.currentPage - 1 };
+    case "SET_SEARCH_VALUE":
+      return { ...state, searchValue: payload };
     default:
       return state;
   }
