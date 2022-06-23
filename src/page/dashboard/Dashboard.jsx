@@ -1,15 +1,18 @@
 import axios from "axios";
 import React, { useEffect, useReducer } from "react";
-import { EmployeeCard, SearchBar } from "../../components";
+import { EmployeeCard, NavigationBottom, SearchBar } from "../../components";
+import { getCurrentPageEmployeeList, pageRange } from "../../utility";
 import { reducerFunction } from "./reducer-function";
 
 function Dashboard() {
   const initialState = {
     employeeList: [],
+    currentPage: 1,
   };
 
   const [state, dispatch] = useReducer(reducerFunction, initialState);
-  const { employeeList } = state;
+  const pageLimit = 10;
+  const { employeeList, currentPage } = state;
 
   useEffect(() => {
     const fetchEmployeeList = async () => {
@@ -22,6 +25,15 @@ function Dashboard() {
     };
     fetchEmployeeList();
   }, []);
+
+  const pagePills = Math.ceil(employeeList.length / pageLimit);
+  const pages = pageRange(pagePills);
+  const currentPageEmployeeList = getCurrentPageEmployeeList(
+    employeeList,
+    currentPage,
+    pageLimit
+  );
+
   return (
     <main className="w-11/12 lg:w-3/4 h-screen mx-auto">
       <SearchBar />
@@ -30,7 +42,7 @@ function Dashboard() {
           <thead>
             <tr className="border border-t-0 border-l-0 border-r-0 border-gray-300 text-left">
               <th>
-                <input type="checkbox" className="cursor-pointer"/>
+                <input type="checkbox" className="cursor-pointer" />
               </th>
               <th className="p-2">Name</th>
               <th className="p-2">Email</th>
@@ -39,12 +51,17 @@ function Dashboard() {
             </tr>
           </thead>
           <tbody>
-            {employeeList.map((employee) => (
+            {currentPageEmployeeList.map((employee) => (
               <EmployeeCard key={employee.id} employee={employee} />
             ))}
           </tbody>
         </table>
       </section>
+      <NavigationBottom
+        pages={pages}
+        dispatch={dispatch}
+        currentPage={currentPage}
+      />
     </main>
   );
 }
