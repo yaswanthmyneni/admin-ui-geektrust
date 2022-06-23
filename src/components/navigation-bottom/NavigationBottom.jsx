@@ -7,7 +7,7 @@ import {
 } from "../../assets/icons/icons";
 
 function NavigationBottom(props) {
-  const { currentPage, dispatch, pages } = props;
+  const { currentPage, dispatch, pages, deleteSelectedEntires } = props;
 
   return (
     <section className="page-navigation flex flex-wrap gap-2 justify-between items-center">
@@ -62,6 +62,7 @@ function NavigationBottom(props) {
       </ul>
       <button
         className="px-4 py-1 h-fit rounded text-white bg-red-500"
+        onClick={deleteSelectedEntires}
       >
         delete selected
       </button>

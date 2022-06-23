@@ -7,9 +7,12 @@ import {
   SearchBar,
 } from "../../components";
 import {
+  deleteHandler,
+  deleteSelectedEntires,
   getCurrentPageEmployeeList,
   getFilteredListBySearch,
   pageRange,
+  selectAllHandler,
 } from "../../utility";
 import { reducerFunction } from "./reducer-function";
 
@@ -20,11 +23,21 @@ function Dashboard() {
     searchValue: "",
     isEditModal: false,
     id: null,
+    isChecked: false,
+    checkedList: [],
   };
 
   const [state, dispatch] = useReducer(reducerFunction, initialState);
   const pageLimit = 10;
-  const { employeeList, currentPage, searchValue, isEditModal, id } = state;
+  const {
+    employeeList,
+    currentPage,
+    searchValue,
+    isEditModal,
+    id,
+    checkedList,
+    isChecked,
+  } = state;
 
   useEffect(() => {
     const fetchEmployeeList = async () => {
@@ -52,6 +65,7 @@ function Dashboard() {
     currentPage,
     pageLimit
   );
+  console.log(checkedList);
 
   return (
     <main className="w-11/12 lg:w-3/4 h-screen mx-auto">
@@ -60,8 +74,20 @@ function Dashboard() {
         <table className="w-full">
           <thead>
             <tr className="border border-t-0 border-l-0 border-r-0 border-gray-300 text-left">
-              <th>
-                <input type="checkbox" className="cursor-pointer" />
+              <th className="pl-2">
+                <input
+                  type="checkbox"
+                  className="cursor-pointer"
+                  checked={isChecked}
+                  onChange={() =>
+                    selectAllHandler(
+                      dispatch,
+                      isChecked,
+                      checkedList,
+                      currentPageEmployeeList
+                    )
+                  }
+                />
               </th>
               <th className="p-2">Name</th>
               <th className="p-2">Email</th>
@@ -75,6 +101,9 @@ function Dashboard() {
                 key={employee.id}
                 employee={employee}
                 dispatch={dispatch}
+                deleteHandler={deleteHandler}
+                employeeList={employeeList}
+                checkedList={checkedList}
               />
             ))}
           </tbody>
@@ -84,6 +113,9 @@ function Dashboard() {
         pages={pages}
         dispatch={dispatch}
         currentPage={currentPage}
+        deleteSelectedEntires={() =>
+          deleteSelectedEntires(employeeList, checkedList, dispatch)
+        }
       />
       <EditModal
         isEditModal={isEditModal}
